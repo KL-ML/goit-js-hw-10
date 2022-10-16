@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce';
 import './css/styles.css';
 import API from './fetchCountries';
 
@@ -5,53 +6,66 @@ const DEBOUNCE_DELAY = 300;
 const searchBox = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
+countryList.style.cssText += 'list-style-type:none;';
 
-searchBox.addEventListener('input', () => {
-  API.fetchCountries()
-    //   .then((countries) => renderCountriesList(countries))
-      .then((countries) => renderCountryInfo(countries))
-    .catch((error) => console.log(error));
-});
+searchBox.addEventListener('input', debounce(onInputSearch, DEBOUNCE_DELAY));
 
+function onInputSearch(event) {
 
+    const inputValue = event.target.value.trim();
+    if (inputValue !== '') {
+        API.fetchCountries(inputValue)
+        .then(renderCountriesList)
+        .catch((error) => console.log(error));
+    }
+    countryList.innerHTML = "";
+    countryInfo.innerHTML = "";
+};
 
 function renderCountriesList(countries) {
-    const { name, capital, population, flags, languages } = countries;
-    console.log(countries);
-  const markup = countries
-    .map(({ name, flags }) => {
-        return `<li>
-        <img alt="Flag of ${name}" src=${flags.svg} width="25">
-        <p>${name}</p>
-        </li>`;
-    })
-    .join("");
-  countryList.insertAdjacentHTML('beforeend', markup);
-}
-function renderCountryInfo(countries) {
-    const { name, capital, population, flags, languages } = countries;
-    console.log(countries);
-  const markup = countries
-      .map(({ name, capital, population, flags, languages }) => {
-          const languagesList = [];
-          languages.map(({ name }) => {
-              languagesList.push(name);
-          });
+    console.log(countries.length);
 
+    if (countries.length > 10) {
+        window.alert("Too many matches found. Please enter a more specific name.");
+
+    } else if (countries.length <= 10 && countries.length >= 2) {
+        countryInfo.innerHTML = "";
+        const markup = countries
+        .map(({ name, flags }) => {
+            return `<li>
+            <p><img alt="Flag of ${name}" src=${flags.svg} width="25">   ${name}</p>
+            </li>`;
+        })
+        .join("");
+        countryList.insertAdjacentHTML('beforeend', markup);
+
+    } else if (countries.length === 1) {
+        countryList.innerHTML = "";
+        const markup = countries
+        .map(({ name, capital, population, flags, languages }) => {
+            const languagesList = [];
+            languages.map(({ name }) => {
+                languagesList.push(name);
+            });
         return `
-        <div>
-            <h2 class="country-title">
-            <img alt="Flag of ${name}" src=${flags.svg} width="25">
-            ${name}</h2>
-        </div>
-        <p><b>Capital:</b> ${capital}</p>
-        <p><b>Population:</b> ${population}</p>
-        <p><b>Languages:</b> ${languagesList}</p>
+            <div>
+                <h2 class="country-title">
+                    <img alt="Flag of ${name}" src=${flags.svg} width="25">
+                    ${name}</h2>
+            </div>
+            <p><b>Capital:</b> ${capital}</p>
+            <p><b>Population:</b> ${population}</p>
+            <p><b>Languages:</b> ${languagesList}</p>
         `;
-    })
-    .join("");
-  countryInfo.insertAdjacentHTML('beforeend', markup);
+        })
+        .join("");
+        countryInfo.insertAdjacentHTML('beforeend', markup);
+    } else {
+        countryList.innerHTML = "";
+        countryInfo.innerHTML = "";
+    }
 }
+
 
 
 
