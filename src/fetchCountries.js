@@ -1,13 +1,13 @@
-const BASE_URL = `https://restcountries.com/v2/all`;
+const BASE_URL = `https://restcountries.com/v2/name/`;
 
-function fetchCountries() {
-const url = `${BASE_URL}?fields=name,capital,population,flags,languages`;
+function fetchCountries(name) {
+const url = `${BASE_URL}${name}?fields=name,capital,population,flags,languages`;
   return fetch(url).then(
     (response) => {
       if (!response.ok) {
         throw new Error(response.status);
       }
-        return response.json();
+          return response.json();
     }
   );
 }
