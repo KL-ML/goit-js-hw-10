@@ -1,4 +1,5 @@
 import debounce from 'lodash.debounce';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import './css/styles.css';
 import API from './fetchCountries';
 
@@ -23,10 +24,9 @@ function onInputSearch(event) {
 };
 
 function renderCountriesList(countries) {
-    console.log(countries.length);
 
     if (countries.length > 10) {
-        window.alert("Too many matches found. Please enter a more specific name.");
+        Notify.info("Too many matches found. Please enter a more specific name.");
 
     } else if (countries.length <= 10 && countries.length >= 2) {
         countryInfo.innerHTML = "";
