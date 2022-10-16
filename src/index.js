@@ -1,45 +1,19 @@
 import './css/styles.css';
+import API from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 const searchBox = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-// const fetchCountries = name => {
-//     return fetch(`https://restcountries.com/v3.1/name/peru`)
-//   .then(response => {
-//     if (!response.ok) {
-//       throw new Error(response.status);
-//     }
-//     return response.json();
-//   })
-//   .then(data => {
-//     // Data handling
-//   })
-//   .catch(error => {
-//     // Error handling
-//   });
-//     // fetch(`https://restcountries.com/v3.1/name/peru`).then(r => r.json());
-// }
 searchBox.addEventListener('input', () => {
-  fetchCountries()
+  API.fetchCountries()
     //   .then((countries) => renderCountriesList(countries))
       .then((countries) => renderCountryInfo(countries))
     .catch((error) => console.log(error));
 });
 
-function fetchCountries() {
 
-const url = `https://restcountries.com/v2/all?fields=name,capital,population,flags,languages`;
-  return fetch(url).then(
-    (response) => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-        return response.json();
-    }
-  );
-}
 
 function renderCountriesList(countries) {
     const { name, capital, population, flags, languages } = countries;
@@ -80,17 +54,7 @@ function renderCountryInfo(countries) {
 }
 
 
-// fetchCountries(1).then(onFetchSuccess).catch(onFetchError);
 
-// function onFetchSuccess(country) {
-//     console.log('onFetchSuccess -> onFetchSuccess');
-//     console.log(country);
-// }
-// function onFetchError(error) {
-//     console.log('onFetchError -> onFetchError');
-//     console.log('This is in catch blok');
-//     console.log(error);
-// }
 //   Создай фронтенд часть приложения поиска данных о стране по её частичному или полному имени. 
 // Посмотри демо видео работы приложения.
 //==============
